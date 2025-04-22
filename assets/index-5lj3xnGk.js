@@ -13206,90 +13206,91 @@ var pt = function(e2) {
 A.forEach(function(e2) {
   dt[e2] = pt(e2);
 });
-const Card = ({ cardNumbers, expirationDate }) => {
-  const [badgeBrand, setBadgeBrand] = reactExports.useState(0);
-  const badgeImagePath = () => {
-    if (badgeBrand === 1) return "./images/Mastercard.png";
-    if (badgeBrand === 2) return "./images/Visa.png";
-    return "";
-  };
-  const settingBadgeBrand = () => {
-    const firstSection = String(cardNumbers.first);
-    if (firstSection.length >= 2) {
-      const firstTwoDigits = firstSection.substring(0, 2);
-      const numValue = parseInt(firstTwoDigits);
-      if (numValue >= 51 && numValue <= 55) {
-        setBadgeBrand(1);
-        return;
+const BADGE_BRAND = {
+  MASTER_CARD: 1,
+  VISA: 2
+};
+const cardBrandRules = [
+  {
+    brand: BADGE_BRAND.MASTER_CARD,
+    validate: (cardFirstSection) => {
+      if (cardFirstSection.length >= 2) {
+        const firstTwoDigits = parseInt(cardFirstSection.substring(0, 2));
+        return firstTwoDigits >= 51 && firstTwoDigits <= 55;
       }
+      return false;
     }
-    if (firstSection.startsWith("4")) {
-      setBadgeBrand(2);
-      return;
-    }
-    setBadgeBrand(0);
-  };
-  const formatDate = () => {
-    const month = expirationDate.month;
-    const year = expirationDate.year;
-    if (month === "" && year === "") return;
-    if (year === "") return month;
-    return `${month} / ${year}`;
-  };
-  reactExports.useEffect(() => {
-    settingBadgeBrand();
-  }, [cardNumbers]);
+  },
+  {
+    brand: BADGE_BRAND.VISA,
+    validate: (cardFirstSection) => cardFirstSection.startsWith("4")
+  }
+];
+const badgeImagePath = (badgeBrand) => {
+  if (badgeBrand === 1) return "./images/Mastercard.png";
+  if (badgeBrand === 2) return "./images/Visa.png";
+  return "";
+};
+const formatDate = (expirationDate) => {
+  const { month, year } = expirationDate;
+  if (month === "" && year === "") return;
+  if (year === "") return month;
+  return `${month} / ${year}`;
+};
+const Card = ({ cardNumbers, expirationDate }) => {
+  const matchedCard = cardBrandRules.find(
+    (rule) => rule.validate(cardNumbers.first)
+  );
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Container$1, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Wrap, { children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Chip, {}),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(BrandBadge, { image: badgeImagePath() })
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        BrandBadge,
+        {
+          image: badgeImagePath(matchedCard ? matchedCard.brand : 0)
+        }
+      )
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: Object.entries(cardNumbers).map(([key, value]) => {
-      if (key === "third" || key === "fourth") {
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumberblind, { children: "•".repeat(value == null ? void 0 : value.length) }, key);
-      }
-      return /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumber$1, { children: value }, key);
-    }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: formatDate() })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: Object.entries(cardNumbers).map(([key, value]) => /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumbers, { blind: key === "third" || key === "fourth", children: key === "third" || key === "fourth" ? "•".repeat(value == null ? void 0 : value.length) : value }, key)) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: formatDate(expirationDate) })
   ] });
 };
 const Container$1 = dt.div`
-	width: 212px;
-	height: 132px;
-	margin: 0 auto 45px;
-	padding: 8px 12px;
-	border-radius: 4px;
-	background: #333;
-	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.25);
+  width: 212px;
+  height: 132px;
+  margin: 0 auto 45px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: #333;
+  box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.25);
 `;
 const Chip = dt.div`
-	background-color: #ddcd78;
-	width: 36px;
-	height: 22px;
-	border-radius: 5px;
+  background-color: #ddcd78;
+  width: 36px;
+  height: 22px;
+  border-radius: 5px;
 `;
 const BrandBadge = dt.div`
-	background-image: url("${(props) => props.image}");
-	background-size: cover;
-	width: 36px;
-	height: 22px;
-	border-radius: 5px;
+  background-image: url('${(props) => props.image}');
+  background-size: cover;
+  width: 36px;
+  height: 22px;
+  border-radius: 5px;
 `;
 const Wrap = dt.div`
-	display: flex;
-	justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 `;
 const CardInfoWrap = dt.div`
-	display: flex;
-	gap: 10px;
-	font-size: 14px;
-	font-weight: 500;
-	color: #fff;
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
 `;
-const CardNumber$1 = dt.p`
-	letter-spacing: 2.24px;
+const CardNumbers = dt.p`
+  letter-spacing: ${(props) => props.blind ? "" : "2.24px"};
 `;
-const CardNumberblind = dt.p``;
 const Description = ({ children, color = "#8B95A1" }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(DescriptionText, { color, children });
 };
@@ -13301,15 +13302,22 @@ const COLORS = {
   ERROR: "#FF3D3D",
   LIGHT_GRAY: "#acacac"
 };
-const Input = ({ placeholder, isError = false, value, maxLength, handleInput, handleFocusout }) => {
+const Input = ({
+  placeholder,
+  isError = false,
+  value,
+  maxLength,
+  onChange,
+  onBlur
+}) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     TextInput,
     {
-      maxLength: maxLength && maxLength,
+      maxLength,
       value,
       placeholder,
-      onChange: (e) => handleInput(e.target.value),
-      onBlur: handleFocusout && ((e) => handleFocusout(e.target.value)),
+      onChange,
+      onBlur,
       $isError: isError
     }
   );
@@ -13327,32 +13335,30 @@ const TextInput = dt.input(
 	}
 `
 );
-const InputField = ({ label, inputs, errorMessage }) => {
+const InputField = ({ label, children, errorMessage }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Container, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: label }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(InputWrapper, { children: [
-      ...inputs
-    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InputWrapper, { children }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Description, { color: COLORS.ERROR, children: errorMessage && errorMessage })
   ] });
 };
 const Container = dt.div`
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 8px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
 `;
 const InputWrapper = dt.div`
-	width: 100%;
-	display: flex;
-	gap: 8px;
+  width: 100%;
+  display: flex;
+  gap: 8px;
 `;
 const Label = dt.div`
-	color: #0a0d13;
-	font-size: 12px;
-	font-weight: 500;
+  color: #0a0d13;
+  font-size: 12px;
+  font-weight: 500;
 `;
 const Title = ({ children }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(TitleText, { children });
@@ -13379,7 +13385,8 @@ const MESSAGE = {
   MONTH_FORMAT: "MM형태로 입력해주세요."
 };
 const INPUT_MAX_LENGTH$2 = 4;
-const CardNumber = ({ cardNumber: cardNumber2, setCardNumber }) => {
+const ORDER_LABEL$1 = ["first", "second", "third", "fourth"];
+const CardNumberSection = ({ cardNumber, onCardNumberChange }) => {
   const [error, setError] = reactExports.useState({
     first: "",
     second: "",
@@ -13387,99 +13394,112 @@ const CardNumber = ({ cardNumber: cardNumber2, setCardNumber }) => {
     fourth: ""
   });
   const handleInput = (order, value) => {
-    setCardNumber({ ...cardNumber2, [order]: value });
+    onCardNumberChange(order, value);
     if (!isNumberWithinRange(value, INPUT_MAX_LENGTH$2)) {
-      setError({ ...error, [order]: MESSAGE.INVALID_NUMBER });
+      setError((prev2) => ({ ...prev2, [order]: MESSAGE.INVALID_NUMBER }));
       return;
     }
-    setError({ ...error, [order]: "" });
+    setError((prev2) => ({ ...prev2, [order]: "" }));
   };
   const handleFocusout = (order, value) => {
-    if (value.length < INPUT_MAX_LENGTH$2) setError({ ...error, [order]: MESSAGE.INPUT_LENGTH_LIMIT(INPUT_MAX_LENGTH$2) });
+    if (value.length < INPUT_MAX_LENGTH$2)
+      setError((prev2) => ({
+        ...prev2,
+        [order]: MESSAGE.INPUT_LENGTH_LIMIT(INPUT_MAX_LENGTH$2)
+      }));
   };
-  const inputs = Array.from({ length: INPUT_MAX_LENGTH$2 }, (_2, index) => {
-    const orderLabels = ["first", "second", "third", "fourth"];
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(
-      Input,
-      {
-        isError: error[orderLabels[index]].length > 0,
-        placeholder: "1234",
-        value: cardNumber2[orderLabels[index]],
-        maxLength: INPUT_MAX_LENGTH$2,
-        handleInput: (numbers) => handleInput(orderLabels[index], numbers),
-        handleFocusout: (numbers) => handleFocusout(orderLabels[index], numbers)
-      }
-    );
-  });
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(CardNumberWrap$2, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Title, { children: "결제할 카드 번호를 입력해 주세요" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Description, { children: "본인 명의의 카드만 결제 가능합니다." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { label: "카드 번호", inputs, errorMessage: findErrorOrder(error) })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { label: "카드 번호", errorMessage: findErrorOrder(error), children: ORDER_LABEL$1.map((label) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Input,
+      {
+        isError: error[label].length > 0,
+        placeholder: "1234",
+        value: cardNumber[label],
+        maxLength: INPUT_MAX_LENGTH$2,
+        onChange: (e) => handleInput(label, e.target.value),
+        onBlur: (e) => handleFocusout(label, e.target.value)
+      }
+    )) })
   ] });
 };
 const CardNumberWrap$2 = dt.div`
-	height: 130px;
+  height: 130px;
 `;
 const INPUT_MAX_LENGTH$1 = 2;
-const ExpirationDate = ({ expirationDate, setExpirationDate }) => {
+const ORDER_LABEL = ["month", "year"];
+const expirationErrorRule = [
+  {
+    error: MESSAGE.INVALID_NUMBER,
+    validate: (date) => !isNumberWithinRange(date, INPUT_MAX_LENGTH$1)
+  },
+  {
+    error: MESSAGE.MONTH_RANGE,
+    validate: (date, order) => {
+      if (order === "month") {
+        const month = Number(date);
+        return month < 0 || month > 12;
+      }
+    }
+  },
+  {
+    error: (nowYear) => MESSAGE.YEAR_RANGE(nowYear),
+    validate: (date, order, nowYear) => {
+      if (order === "year") {
+        const year = Number(date);
+        return year < nowYear && year >= 0;
+      }
+    }
+  }
+];
+const ExpirationDateSection = ({
+  expirationDate,
+  onExpirationDateChange
+}) => {
   const [error, setError] = reactExports.useState({
     month: "",
     year: ""
   });
   const nowYear = (/* @__PURE__ */ new Date()).getFullYear() % 100;
   const handleInput = (order, value) => {
-    setExpirationDate({ ...expirationDate, [order]: value });
-    if (!isNumberWithinRange(value, INPUT_MAX_LENGTH$1)) {
-      setError({ ...error, [order]: MESSAGE.INVALID_NUMBER });
-      return;
-    }
-    if (order === "month") {
-      const month = Number(value);
-      if (month < 0 || month > 12) {
-        setError({ ...error, month: MESSAGE.MONTH_RANGE });
-        return;
-      }
-    }
-    if (order === "year") {
-      const year = Number(value);
-      if (year < nowYear && year >= 0) {
-        setError({ ...error, year: MESSAGE.YEAR_RANGE(nowYear) });
-        return;
-      }
-    }
-    setError({ ...error, [order]: "" });
+    onExpirationDateChange(order, value);
+    const matchedError = expirationErrorRule.find(
+      (rule) => rule.validate(value, order, nowYear)
+    );
+    setError((prev2) => ({
+      ...prev2,
+      [order]: matchedError ? typeof matchedError.error === "function" ? matchedError.error(nowYear) : matchedError.error : ""
+    }));
   };
   const handleFocusout = (order, value) => {
-    if (value.length < INPUT_MAX_LENGTH$1) setError({ ...error, [order]: MESSAGE.MONTH_FORMAT });
+    if (value.length < INPUT_MAX_LENGTH$1)
+      setError((prev2) => ({ ...prev2, [order]: MESSAGE.MONTH_FORMAT }));
   };
-  const inputs = Array.from({ length: INPUT_MAX_LENGTH$1 }, (_2, index) => {
-    const orderLabels = ["month", "year"];
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(
-      Input,
-      {
-        isError: error[orderLabels[index]].length > 0,
-        placeholder: "MM",
-        value: expirationDate[orderLabels[index]],
-        maxLength: INPUT_MAX_LENGTH$1,
-        handleInput: (numbers) => handleInput(orderLabels[index], numbers),
-        handleFocusout: (numbers) => handleFocusout(orderLabels[index], numbers)
-      }
-    );
-  });
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(CardNumberWrap$1, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Title, { children: "카드 유효기간을 입력해 주세요" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Description, { children: "월/년도(MMYY)를 순서대로 입력해 주세요." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { label: "유효기간", inputs, errorMessage: findErrorOrder(error) })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { label: "유효기간", errorMessage: findErrorOrder(error), children: ORDER_LABEL.map((label) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Input,
+      {
+        isError: error[label].length > 0,
+        placeholder: label === "month" ? "MM" : "YY",
+        value: expirationDate[label],
+        maxLength: INPUT_MAX_LENGTH$1,
+        onChange: (e) => handleInput(label, e.target.value),
+        onBlur: (e) => handleFocusout(label, e.target.value)
+      }
+    )) })
   ] });
 };
 const CardNumberWrap$1 = dt.div`
-	height: 130px;
+  height: 130px;
 `;
 const INPUT_MAX_LENGTH = 3;
-const CardCvc = ({ cvcNumber, setcvcNumber }) => {
+const CardCvcSection = ({ cvcNumber, onCvcNumberChange }) => {
   const [error, setError] = reactExports.useState("");
   const handleInput = (value) => {
-    setcvcNumber(value);
+    onCvcNumberChange(value);
     if (!isNumberWithinRange(value, INPUT_MAX_LENGTH)) {
       setError(MESSAGE.INVALID_NUMBER);
       return;
@@ -13487,18 +13507,26 @@ const CardCvc = ({ cvcNumber, setcvcNumber }) => {
     setError("");
   };
   const handleFocusout = (value) => {
-    if (value.length < INPUT_MAX_LENGTH) setError(MESSAGE.INPUT_LENGTH_LIMIT(INPUT_MAX_LENGTH));
+    if (value.length < INPUT_MAX_LENGTH)
+      setError(MESSAGE.INPUT_LENGTH_LIMIT(INPUT_MAX_LENGTH));
   };
-  const inputs = [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { maxLength: INPUT_MAX_LENGTH, isError: error.length > 0, placeholder: "123", value: cvcNumber, handleInput: (value) => handleInput(value), handleFocusout: (value) => handleFocusout(value) })
-  ];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(CardNumberWrap, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Title, { children: "CVC 번호를 입력해 주세요" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { label: "CVC", inputs, errorMessage: error })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { label: "CVC", errorMessage: error, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Input,
+      {
+        maxLength: INPUT_MAX_LENGTH,
+        isError: error.length > 0,
+        placeholder: "123",
+        value: cvcNumber,
+        onChange: (e) => handleInput(e.target.value),
+        onBlur: (e) => handleFocusout(e.target.value)
+      }
+    ) })
   ] });
 };
 const CardNumberWrap = dt.div`
-	height: 130px;
+  height: 130px;
 `;
 function App() {
   const [cardNumber, setCardNumber] = reactExports.useState({
@@ -13514,15 +13542,39 @@ function App() {
   const [cvcNumber, setcvcNumber] = reactExports.useState("");
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(MainContainer, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Card, { cardNumbers: cardNumber, expirationDate }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumber, { cardNumber, setCardNumber }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(ExpirationDate, { expirationDate, setExpirationDate }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(CardCvc, { cvcNumber, setcvcNumber })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      CardNumberSection,
+      {
+        cardNumber,
+        onCardNumberChange: (order, value) => setCardNumber((prev2) => ({
+          ...prev2,
+          [order]: value
+        }))
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ExpirationDateSection,
+      {
+        expirationDate,
+        onExpirationDateChange: (order, value) => setExpirationDate((prev2) => ({
+          ...prev2,
+          [order]: value
+        }))
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      CardCvcSection,
+      {
+        cvcNumber,
+        onCvcNumberChange: (value) => setcvcNumber(value)
+      }
+    )
   ] });
 }
 const MainContainer = dt.div`
-	width: 376px;
-	padding: 77px 30px 20px;
-	margin: auto;
+  width: 376px;
+  padding: 77px 30px 20px;
+  margin: auto;
 `;
 ReactDOM.createRoot(document.getElementById("root")).render(
   /* @__PURE__ */ jsxRuntimeExports.jsx(React.StrictMode, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) })
