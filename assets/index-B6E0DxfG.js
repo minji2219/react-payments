@@ -19304,11 +19304,12 @@ const CardCvcSection = ({
 const CardNumberWrap = dt.div`
   height: 130px;
 `;
-const Button = ({ children, onClick, style }) => {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(Container$2, { onClick, style, children });
+const Button = ({ children, bgColor = "#333", onClick, style }) => {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Container$2, { onClick, bgColor, style, children });
 };
 const Container$2 = dt.button`
-  background-color: #333;
+  background-color: ${(props) => props.bgColor};
+  border: none;
   width: 100%;
   color: white;
   font-weight: bold;
@@ -19354,25 +19355,19 @@ const CardPreview = ({ cardNumbers, expirationDate, cardCompany }) => {
   const matchedCard = cardBrandRules.find(
     (rule) => rule.validate(cardNumbers.first)
   );
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    Container$1,
-    {
-      background: cardCompany !== "" ? (_a = CARD_COMPANY[cardCompany]) == null ? void 0 : _a.color : cardCompany,
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(Wrap, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Chip, {}),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            BrandBadge,
-            {
-              image: badgeImagePath(matchedCard ? matchedCard.brand : 0)
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: Object.entries(cardNumbers).map(([key, value]) => /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumbers, { $blind: key === "third" || key === "fourth", children: key === "third" || key === "fourth" ? "•".repeat(value == null ? void 0 : value.length) : value }, key)) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: formatDate(expirationDate) })
-      ]
-    }
-  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Container$1, { background: (_a = CARD_COMPANY[cardCompany]) == null ? void 0 : _a.color, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(Wrap, { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Chip, {}),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        BrandBadge,
+        {
+          image: badgeImagePath(matchedCard ? matchedCard.brand : 0)
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: Object.entries(cardNumbers).map(([key, value]) => /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumbers, { $blind: key === "third" || key === "fourth", children: key === "third" || key === "fourth" ? "•".repeat(value == null ? void 0 : value.length) : value }, key)) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: formatDate(expirationDate) })
+  ] });
 };
 const Container$1 = dt.div`
   width: 212px;
@@ -19507,13 +19502,7 @@ const INIT_FORM_DATA = {
   password: ""
 };
 const Main = () => {
-  const { formData, onChange } = useInput({
-    cardNumber: INIT_CARD_NUMBER,
-    expirationDate: INIT_EXPIRATION_DATE,
-    cvcNumber: "",
-    cardCompany: "",
-    password: ""
-  });
+  const { formData, onChange } = useInput(INIT_FORM_DATA);
   const { isErrors, errorMessages, onValidate, onFocusout } = useErrors(
     {
       cardNumber: false,
