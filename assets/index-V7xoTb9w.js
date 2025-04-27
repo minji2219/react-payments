@@ -17438,7 +17438,7 @@ function createBrowserRouter(routes, opts) {
     unstable_getContext: opts == null ? void 0 : opts.unstable_getContext,
     future: opts == null ? void 0 : opts.future,
     history: createBrowserHistory({ window: opts == null ? void 0 : opts.window }),
-    hydrationData: parseHydrationData(),
+    hydrationData: (opts == null ? void 0 : opts.hydrationData) || parseHydrationData(),
     routes,
     mapRouteProperties,
     hydrationRouteProperties,
@@ -18494,8 +18494,8 @@ var unitlessKeys = {
   strokeOpacity: 1,
   strokeWidth: 1
 };
-var define_process_env_default = {};
-var f = "undefined" != typeof process && void 0 !== define_process_env_default && (define_process_env_default.REACT_APP_SC_ATTR || define_process_env_default.SC_ATTR) || "data-styled", m = "active", y = "data-styled-version", v = "6.1.17", g = "/*!sc*/\n", S = "undefined" != typeof window && "HTMLElement" in window, w = Boolean("boolean" == typeof SC_DISABLE_SPEEDY ? SC_DISABLE_SPEEDY : "undefined" != typeof process && void 0 !== define_process_env_default && void 0 !== define_process_env_default.REACT_APP_SC_DISABLE_SPEEDY && "" !== define_process_env_default.REACT_APP_SC_DISABLE_SPEEDY ? "false" !== define_process_env_default.REACT_APP_SC_DISABLE_SPEEDY && define_process_env_default.REACT_APP_SC_DISABLE_SPEEDY : "undefined" != typeof process && void 0 !== define_process_env_default && void 0 !== define_process_env_default.SC_DISABLE_SPEEDY && "" !== define_process_env_default.SC_DISABLE_SPEEDY ? "false" !== define_process_env_default.SC_DISABLE_SPEEDY && define_process_env_default.SC_DISABLE_SPEEDY : false), _ = Object.freeze([]), C = Object.freeze({});
+var define_process_env_default$1 = {};
+var f = "undefined" != typeof process && void 0 !== define_process_env_default$1 && (define_process_env_default$1.REACT_APP_SC_ATTR || define_process_env_default$1.SC_ATTR) || "data-styled", m = "active", y = "data-styled-version", v = "6.1.17", g = "/*!sc*/\n", S = "undefined" != typeof window && "HTMLElement" in window, w = Boolean("boolean" == typeof SC_DISABLE_SPEEDY ? SC_DISABLE_SPEEDY : "undefined" != typeof process && void 0 !== define_process_env_default$1 && void 0 !== define_process_env_default$1.REACT_APP_SC_DISABLE_SPEEDY && "" !== define_process_env_default$1.REACT_APP_SC_DISABLE_SPEEDY ? "false" !== define_process_env_default$1.REACT_APP_SC_DISABLE_SPEEDY && define_process_env_default$1.REACT_APP_SC_DISABLE_SPEEDY : "undefined" != typeof process && void 0 !== define_process_env_default$1 && void 0 !== define_process_env_default$1.SC_DISABLE_SPEEDY && "" !== define_process_env_default$1.SC_DISABLE_SPEEDY ? "false" !== define_process_env_default$1.SC_DISABLE_SPEEDY && define_process_env_default$1.SC_DISABLE_SPEEDY : false), _ = Object.freeze([]), C = Object.freeze({});
 function I(e2, t2, n2) {
   return void 0 === n2 && (n2 = C), e2.theme !== n2.theme && e2.theme || t2 || n2.theme;
 }
@@ -19627,16 +19627,22 @@ const Description = dt.div`
   font-weight: 700;
   text-align: center;
 `;
-const router = createBrowserRouter([
+var define_process_env_default = {};
+const router = createBrowserRouter(
+  [
+    {
+      path: PATH.MAIN,
+      element: /* @__PURE__ */ jsxRuntimeExports.jsx(Main, {})
+    },
+    {
+      path: PATH.CONFIRM,
+      element: /* @__PURE__ */ jsxRuntimeExports.jsx(Confirm, {})
+    }
+  ],
   {
-    path: PATH.MAIN,
-    element: /* @__PURE__ */ jsxRuntimeExports.jsx(Main, {})
-  },
-  {
-    path: PATH.CONFIRM,
-    element: /* @__PURE__ */ jsxRuntimeExports.jsx(Confirm, {})
+    basename: define_process_env_default.PUBLIC_URL
   }
-]);
+);
 function Router() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(RouterProvider, { router });
 }
