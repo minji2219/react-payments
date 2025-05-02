@@ -18998,32 +18998,8 @@ const Label = dt.div`
   font-weight: 500;
 `;
 const Input = reactExports.forwardRef(
-  ({
-    name,
-    type,
-    placeholder,
-    isError = false,
-    value,
-    maxLength,
-    autoFocus,
-    onChange,
-    onBlur
-  }, ref) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(
-      TextInput,
-      {
-        ref,
-        name,
-        type,
-        maxLength,
-        value,
-        placeholder,
-        autoFocus,
-        onChange,
-        onBlur,
-        $isError: isError
-      }
-    );
+  ({ isError = false, ...props }, ref) => {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(TextInput, { ref, ...props, $isError: isError });
   }
 );
 const TextInput = dt.input(
@@ -19107,7 +19083,7 @@ const CardCompanySection = ({ onChange, name }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(CardNumberWrap$3, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Title, { children: "카드사를 선택해 주세요" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Description$1, { children: "현재 국내 카드사만 가능합니다." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { name, onChange, $isError: false, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { name, onChange, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", hidden: true, children: "카드사를 선택해주세요" }),
       Object.entries(CARD_COMPANY).map(([key, value]) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: key, children: value.name }, key))
     ] })
@@ -19116,20 +19092,18 @@ const CardCompanySection = ({ onChange, name }) => {
 const CardNumberWrap$3 = dt.div`
   height: 130px;
 `;
-const Select = dt.select(
-  (props) => `
-  width:100%;
-  margin-top:16px;
+const Select = dt.select`
+  width: 100%;
+  margin-top: 16px;
   padding: 8px;
   border-radius: 2px;
-  border:none;
-  outline: 1px solid ${props.$isError ? COLORS.ERROR : COLORS.LIGHT_GRAY};
-  
+  border: none;
+  outline: 1px solid ${COLORS.LIGHT_GRAY};
+
   &:focus {
-    outline: 1px solid ${props.$isError ? COLORS.ERROR : "#000"};
+    outline: 1px solid '#000';
   }
-`
-);
+`;
 function findErrorOrder(error) {
   for (const key in error) {
     if (error[key].length > 0) return error[key];
@@ -19158,13 +19132,19 @@ const CardNumberSection = ({
     reactExports.useRef(null)
   ];
   const handleInput = (e, order) => {
-    var _a;
     onChange(e, order);
     onValidate(errorRule$1, e, order);
-    const refIndex = ORDER_LABEL$1.findIndex((i) => i === order);
-    if (errorMessage[order].length === 0 && e.target.value.length === INPUT_MAX_LENGTH$2 && inputRefs[refIndex + 1])
-      (_a = inputRefs[refIndex + 1].current) == null ? void 0 : _a.focus();
   };
+  reactExports.useEffect(() => {
+    var _a, _b, _c, _d;
+    const activeElement = document.activeElement;
+    const focusedIndex = inputRefs.findIndex(
+      (ref) => ref.current === activeElement
+    );
+    const order = ORDER_LABEL$1[focusedIndex];
+    if (((_a = errorMessage[order]) == null ? void 0 : _a.length) === 0 && ((_b = value[order]) == null ? void 0 : _b.length) === INPUT_MAX_LENGTH$2)
+      (_d = (_c = inputRefs[focusedIndex + 1]) == null ? void 0 : _c.current) == null ? void 0 : _d.focus();
+  }, [errorMessage, value]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(CardNumberWrap$2, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Title, { children: "결제할 카드 번호를 입력해 주세요" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Description$1, { children: "본인 명의의 카드만 결제 가능합니다." }),
@@ -19232,13 +19212,19 @@ const ExpirationDateSection = ({
     reactExports.useRef(null)
   ];
   const handleInput = (e, order) => {
-    var _a;
     onChange(e, order);
     onValidate(expirationErrorRule, e, order);
-    const refIndex = ORDER_LABEL.findIndex((i) => i === order);
-    if (errorMessage[order].length === 0 && e.target.value.length === INPUT_MAX_LENGTH$1 && inputRefs[refIndex + 1])
-      (_a = inputRefs[refIndex + 1].current) == null ? void 0 : _a.focus();
   };
+  reactExports.useEffect(() => {
+    var _a, _b, _c, _d;
+    const activeElement = document.activeElement;
+    const focusedIndex = inputRefs.findIndex(
+      (ref) => ref.current === activeElement
+    );
+    const order = ORDER_LABEL[focusedIndex];
+    if (((_a = errorMessage[order]) == null ? void 0 : _a.length) === 0 && ((_b = value[order]) == null ? void 0 : _b.length) === INPUT_MAX_LENGTH$1)
+      (_d = (_c = inputRefs[focusedIndex + 1]) == null ? void 0 : _c.current) == null ? void 0 : _d.focus();
+  }, [errorMessage, value]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(CardNumberWrap$1, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Title, { children: "카드 유효기간을 입력해 주세요" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Description$1, { children: "월/년도(MMYY)를 순서대로 입력해 주세요." }),
@@ -19304,8 +19290,8 @@ const CardCvcSection = ({
 const CardNumberWrap = dt.div`
   height: 130px;
 `;
-const Button = ({ children, bgColor = "#333", onClick, style }) => {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(Container$2, { onClick, bgColor, style, children });
+const Button = ({ children, bgColor = "#333", ...props }) => {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Container$2, { bgColor, ...props, children });
 };
 const Container$2 = dt.button`
   background-color: ${(props) => props.bgColor};
@@ -19350,6 +19336,11 @@ const formatDate = (expirationDate) => {
   if (year === "") return month;
   return `${month} / ${year}`;
 };
+const formatCardNumbers = (section, value) => {
+  if (section === "third" || section === "fourth")
+    return "•".repeat(value == null ? void 0 : value.length);
+  return value;
+};
 const CardPreview = ({ cardNumbers, expirationDate, cardCompany }) => {
   var _a;
   const matchedCard = cardBrandRules.find(
@@ -19365,7 +19356,7 @@ const CardPreview = ({ cardNumbers, expirationDate, cardCompany }) => {
         }
       )
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: Object.entries(cardNumbers).map(([key, value]) => /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumbers, { $blind: key === "third" || key === "fourth", children: key === "third" || key === "fourth" ? "•".repeat(value == null ? void 0 : value.length) : value }, key)) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: Object.entries(cardNumbers).map(([key, value]) => /* @__PURE__ */ jsxRuntimeExports.jsx(CardNumbers, { $blind: key === "third" || key === "fourth", children: formatCardNumbers(key, value) }, key)) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(CardInfoWrap, { children: formatDate(expirationDate) })
   ] });
 };
@@ -19427,7 +19418,7 @@ const useInput = (initialData) => {
   };
   return { formData, onChange };
 };
-const useErrors = (initialData, initialMessages) => {
+const useCardValidations = (initialData, initialMessages) => {
   const [isErrors, setIsErrors] = reactExports.useState(initialData);
   const [errorMessages, setErrorMessages] = reactExports.useState(initialMessages);
   const onError = (name, isError) => {
@@ -19484,6 +19475,40 @@ const useErrors = (initialData, initialMessages) => {
   };
   return { isErrors, onError, onValidate, onFocusout, errorMessages };
 };
+const useAutoStep = (formData, isErrors) => {
+  const [step, setStep] = reactExports.useState(1);
+  const [isButtonVisible, setIsButtonVisible] = reactExports.useState(false);
+  const maxStepRef = reactExports.useRef(1);
+  const validationCheckers = {
+    cardNumber: () => !isErrors.cardNumber && Object.values(formData.cardNumber).every((v2) => v2.length === 4),
+    cardCompany: () => !isErrors.cardCompany && !!formData.cardCompany,
+    expirationDate: () => !isErrors.expirationDate && Object.values(formData.expirationDate).every((v2) => v2.length === 2),
+    cvcNumber: () => !isErrors.cvcNumber && formData.cvcNumber.length === 3,
+    password: () => !isErrors.password && formData.password.length === 2
+  };
+  const calculateStep = () => {
+    var _a, _b, _c, _d, _e2;
+    if (!((_a = validationCheckers.cardNumber) == null ? void 0 : _a.call(validationCheckers))) return 1;
+    if (!((_b = validationCheckers.cardCompany) == null ? void 0 : _b.call(validationCheckers))) return 2;
+    if (!((_c = validationCheckers.expirationDate) == null ? void 0 : _c.call(validationCheckers))) return 3;
+    if (!((_d = validationCheckers.cvcNumber) == null ? void 0 : _d.call(validationCheckers))) return 4;
+    if (!((_e2 = validationCheckers.password) == null ? void 0 : _e2.call(validationCheckers))) return 5;
+    return 6;
+  };
+  reactExports.useEffect(() => {
+    const nextStep = calculateStep();
+    if (nextStep > maxStepRef.current) {
+      maxStepRef.current = nextStep;
+      setStep(maxStepRef.current);
+    }
+    if (nextStep === 6) {
+      setIsButtonVisible(true);
+    } else {
+      setIsButtonVisible(false);
+    }
+  }, [formData, isErrors]);
+  return { step, isButtonVisible };
+};
 const INIT_CARD_NUMBER = {
   first: "",
   second: "",
@@ -19503,7 +19528,7 @@ const INIT_FORM_DATA = {
 };
 const Main = () => {
   const { formData, onChange } = useInput(INIT_FORM_DATA);
-  const { isErrors, errorMessages, onValidate, onFocusout } = useErrors(
+  const { isErrors, errorMessages, onValidate, onFocusout } = useCardValidations(
     {
       cardNumber: false,
       expirationDate: false,
@@ -19514,16 +19539,7 @@ const Main = () => {
     INIT_FORM_DATA
   );
   const navigate = useNavigate();
-  const isVisible = (section, maxLength) => {
-    var _a;
-    if (isErrors[section]) return false;
-    if (typeof formData[section] === "string") {
-      return ((_a = formData[section]) == null ? void 0 : _a.length) >= maxLength;
-    }
-    return Object.values(formData[section]).every(
-      (value) => (value == null ? void 0 : value.length) === maxLength
-    );
-  };
+  const { step, isButtonVisible } = useAutoStep(formData, isErrors);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(MainContainer, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       CardPreview,
@@ -19533,7 +19549,7 @@ const Main = () => {
         cardCompany: formData.cardCompany
       }
     ),
-    isVisible("cvcNumber", 3) && /* @__PURE__ */ jsxRuntimeExports.jsx(
+    step >= 5 && /* @__PURE__ */ jsxRuntimeExports.jsx(
       PasswordSection,
       {
         value: formData.password,
@@ -19543,7 +19559,7 @@ const Main = () => {
         errorMessage: errorMessages.password
       }
     ),
-    isVisible("expirationDate", 2) && /* @__PURE__ */ jsxRuntimeExports.jsx(
+    step >= 4 && /* @__PURE__ */ jsxRuntimeExports.jsx(
       CardCvcSection,
       {
         value: formData.cvcNumber,
@@ -19553,7 +19569,7 @@ const Main = () => {
         errorMessage: errorMessages.cvcNumber
       }
     ),
-    isVisible("cardCompany", 1) && /* @__PURE__ */ jsxRuntimeExports.jsx(
+    step >= 3 && /* @__PURE__ */ jsxRuntimeExports.jsx(
       ExpirationDateSection,
       {
         value: formData.expirationDate,
@@ -19563,8 +19579,8 @@ const Main = () => {
         errorMessage: errorMessages.expirationDate
       }
     ),
-    isVisible("cardNumber", 4) && /* @__PURE__ */ jsxRuntimeExports.jsx(CardCompanySection, { onChange, name: "cardCompany" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
+    step >= 2 && /* @__PURE__ */ jsxRuntimeExports.jsx(CardCompanySection, { onChange, name: "cardCompany" }),
+    step >= 1 && /* @__PURE__ */ jsxRuntimeExports.jsx(
       CardNumberSection,
       {
         value: formData.cardNumber,
@@ -19574,7 +19590,7 @@ const Main = () => {
         errorMessage: errorMessages.cardNumber
       }
     ),
-    isVisible("password", 2) && /* @__PURE__ */ jsxRuntimeExports.jsx(
+    isButtonVisible && /* @__PURE__ */ jsxRuntimeExports.jsx(
       Button,
       {
         onClick: () => navigate(PATH.CONFIRM, {
@@ -19591,7 +19607,6 @@ const Main = () => {
 };
 const MainContainer = dt.div`
   width: 376px;
-  height: calc(100vh - 30) px;
   padding: 77px 30px 20px;
   margin: auto;
 `;
